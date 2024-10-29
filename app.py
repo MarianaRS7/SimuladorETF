@@ -195,7 +195,7 @@ if etfs_seleccionados:
 
     # Comparación de riesgo y rendimiento de todos los ETFs seleccionados
     if len(etfs_seleccionados) > 1:
-        st.markdown("<h3 style='color: #1E3A8A;'>Comparación de Riesgo y Rendimiento</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #1E3A8A;'>Comparación de ETFs seleccionados</h3>", unsafe_allow_html=True)
         
         for ticker in tickers_seleccionados:
             precios_historicos_ticker = precios_historicos_todos.get(ticker)
