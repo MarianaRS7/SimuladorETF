@@ -262,49 +262,10 @@ if etfs_seleccionados:
         df_comparacion["Riesgo"] = df_comparacion["Riesgo"].apply(lambda x: f"{x:.2%}" if x is not None else "No disponible")
         df_comparacion["Valor Futuro"] = df_comparacion["Valor Futuro"].apply(lambda x: f"${x:,.2f}" if isinstance(x, (int, float)) else x)
 
-        # Inicializar variable para visualizar como tabla o gráfica
-        visualizar_como_tabla = st.radio("Selecciona la vista para la comparación:", ("Tabla", "Gráfica"), key="radio_comparacion")
-
-        # Mostrar la tabla o la gráfica según la opción seleccionada
-        if visualizar_como_tabla == "Tabla":
-            st.markdown("<style>div.stDataframe > div > div > div > div:nth-child(1) { font-weight: bold; }</style>", unsafe_allow_html=True)
-            st.dataframe(df_comparacion.set_index("ETF").style.set_table_attributes('style="background-color: #B0C4DE;"').set_table_styles(
-                [{'selector': 'th', 'props': [('font-weight', 'bold')]}]
-            ))
-
-        else:
-            # Graficar la comparación de rendimiento y riesgo
-            # Primero, crear un nuevo DataFrame para la gráfica con valores numéricos
-            comparacion_data_numeric = {
-                "ETF": etfs_seleccionados,
-                "Rendimiento": [
-                    next((etf['rendimientos'].get(periodo_seleccionado, None) for etf in ETFs_Data if etf['nombre'] == etf_name), None) for etf_name in etfs_seleccionados
-                ],
-                "Riesgo": [
-                    next((etf['riesgos'].get(periodo_seleccionado, None) for etf in ETFs_Data if etf['nombre'] == etf_name), None) for etf_name in etfs_seleccionados
-                ]
-            }
-            
-            df_comparacion_numeric = pd.DataFrame(comparacion_data_numeric)
-
-            # Mantener los valores numéricos para la gráfica
-            df_comparacion_numeric["Rendimiento"] = df_comparacion_numeric["Rendimiento"].replace({"No disponible": None}).astype(float)
-            df_comparacion_numeric["Riesgo"] = df_comparacion_numeric["Riesgo"].replace({"No disponible": None}).astype(float)
-
-            df_comparacion_melted = pd.melt(df_comparacion_numeric, id_vars='ETF', var_name='Tipo', value_name='Valor')
-
-            # Verificar si hay valores para graficar
-            if df_comparacion_melted['Valor'].notnull().any():
-                # Graficar la comparación
-                fig, ax = plt.subplots(figsize=(10, 6))
-                sns.barplot(data=df_comparacion_melted.dropna(), x='ETF', y='Valor', hue='Tipo', palette='Blues', ax=ax)
-                ax.set_title('Comparación de Rendimiento y Riesgo', fontsize=16)
-                ax.set_ylabel('Valor (%)', fontsize=12)
-                ax.set_xlabel('ETF', fontsize=12)
-                ax.legend(title='Tipo')
-                st.pyplot(fig)
-            else:
-                st.markdown("No hay datos disponibles para graficar rendimiento y riesgo.")
-
+        st.markdown("<style>div.stDataframe > div > div > div > div:nth-child(1) { font-weight: bold; }</style>", unsafe_allow_html=True)
+        st.dataframe(df_comparacion.set_index("ETF").style.set_table_attributes('style="background-color: #B0C4DE;"').set_table_styles(
+            [{'selector': 'th', 'props': [('font-weight', 'bold')]}]
+        ))
+        
 else:
     st.markdown("Por favor, selecciona al menos un ETF para ver los detalles.")
